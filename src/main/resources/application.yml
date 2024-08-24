@@ -1,0 +1,5 @@
+spring:
+  application:
+    name: ethereum-fetcher
+  profiles:
+    active: dev

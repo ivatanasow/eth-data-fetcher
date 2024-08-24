@@ -1,0 +1,20 @@
+server:
+  port: ${API_PORT:8080}
+spring:
+  datasource:
+    url: ${DB_CONNECTION_URL}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    defer-datasource-initialization: true
+  sql:
+    init:
+      mode: always
+application:
+  security:
+    jwt:
+      secret-key: ${JWT_SECRET}
+  ethereum-node-url: ${ETH_NODE_URL}
