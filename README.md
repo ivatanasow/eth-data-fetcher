@@ -1,5 +1,7 @@
 # ETHEREUM-FETCHER
 
+Ethereum Fetcher is an n-tier Spring Boot application that leverages Spring Data and Spring Cloud OpenFeign. It exposes RESTful endpoints, providing an API to fetch Ethereum transaction data and a mechanism to save the requested data per application user. The application is structured into multiple layers — controller, service, and persistence, resulting in a flexible, loosely coupled, and easily maintainable codebase.
+
 ## Running the application
 
 ```bash

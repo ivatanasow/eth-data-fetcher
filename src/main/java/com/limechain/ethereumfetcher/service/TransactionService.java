@@ -20,7 +20,6 @@ import java.util.stream.Collectors;
 @Service
 public class TransactionService {
 
-    //TODO: think for better name
     private final TransactionFetcher transactionFetcher;
 
     private final TransactionsRepository transactionsRepository;
@@ -75,30 +74,5 @@ public class TransactionService {
         Set<String> persistedHashes = transactions.stream().map(Transaction::getTransactionHash).collect(Collectors.toSet());
         return hashes.stream().filter(h -> !persistedHashes.contains(h)).toList();
     }
-
-//    private List<FetchTransactionsResponse> fetchTransactions(List<String> transactionHashes) {
-//        log.debug("Fetching data for [{}] transactions", transactionHashes);
-//
-//        List<CompletableFuture<FetchTransactionsResponse>> futures = transactionHashes
-//                .stream()
-//                .map(hash -> CompletableFuture.supplyAsync(() -> {
-//                    FetchTransactionsRequest requestBody = new FetchTransactionsRequest(1, Constants.JSON_PRC_VERSION, Methods.GET_TX_BY_HASH, List.of(hash));
-//                    return ethereumClient.fetchTransactions(requestBody);
-//                }))
-//                .toList();
-//
-//        // Combine all the CompletableFutures into a single CompletableFuture
-//        CompletableFuture<Void> allOf = CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]));
-//
-//        try {
-//            // Wait for all futures to complete
-//            allOf.get();
-//        } catch (InterruptedException | ExecutionException e) {
-//            throw new RuntimeException("Error fetching transactions", e);
-//        }
-//
-//        // Aggregate the results into a single response object
-//        return futures.stream().map(CompletableFuture::join).toList();
-//    }
 
 }

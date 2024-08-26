@@ -13,6 +13,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -20,29 +24,35 @@ public class TransactionFetcher {
 
     private final EthereumClient ethereumClient;
 
-    public TransactionFetcher(EthereumClient ethereumClient) {
+    private final ExecutorService executorService;
+
+    public TransactionFetcher(EthereumClient ethereumClient, ExecutorService executorService) {
         this.ethereumClient = ethereumClient;
+        this.executorService = executorService;
     }
 
-    //TODO: make calls async
     public ResponseData fetchTransactions(List<String> transactionHashes) {
-        List<Transaction> transactions = new LinkedList<>();
-        Map<String, Object> errors = new HashMap<>();
+        Map<String, Object> errors = new ConcurrentHashMap<>();
 
-        for (String hash : transactionHashes) {
-            try {
-                FetchTransactionsRequest requestBody = new FetchTransactionsRequest(1, Constants.JSON_PRC_VERSION, Methods.GET_TX_BY_HASH, List.of(hash));
-                FetchTransactionsResponse response = ethereumClient.fetchTransactions(requestBody);
-                Transaction transaction = TransactionMapper.toTransactionV2(hash, response);
-                if (transaction != null) {
-                    transactions.add(transaction);
-                }
-            } catch (FeignException e) {
-                String errorMsg = String.format("Unable to get transaction data for transaction [%s]", hash);
-                log.error(errorMsg, hash, e);
-                errors.put(hash, errorMsg);
-            }
-        }
+        List<CompletableFuture<Transaction>> futures = transactionHashes
+                .stream()
+                .map(hash -> CompletableFuture.supplyAsync(() -> {
+                    try {
+                        FetchTransactionsRequest requestBody = new FetchTransactionsRequest(1, Constants.JSON_PRC_VERSION, Methods.GET_TX_BY_HASH, List.of(hash));
+                        FetchTransactionsResponse response = ethereumClient.fetchTransactions(requestBody);
+                        return TransactionMapper.toTransaction(hash, response);
+                    } catch (FeignException e) {
+                        String errorMsg = String.format("Unable to get transaction data for transaction [%s]", hash);
+                        log.error(errorMsg, hash, e);
+                        errors.put(hash, errorMsg);
+                        return null;
+                    }
+                }, executorService)).toList();
+
+        List<Transaction> transactions = futures.stream()
+                .map(CompletableFuture::join)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
 
         return new ResponseData(transactions, errors);
     }

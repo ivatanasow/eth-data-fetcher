@@ -6,7 +6,7 @@ import com.limechain.ethereumfetcher.model.TransactionDto;
 
 public class TransactionMapper {
 
-    public static Transaction toTransactionV2(String transactionHash, FetchTransactionsResponse response) {
+    public static Transaction toTransaction(String transactionHash, FetchTransactionsResponse response) {
         if (response.hasError()) {
             return Transaction
                     .builder()
