@@ -6,9 +6,9 @@ Ethereum Fetcher is an n-tier Spring Boot application that leverages Spring Data
 
 ```bash
 ## Build docker image 
-docker build -t limeapi .
+docker build -t ethfetcher .
 ## Run the container
-docker run limeapi -d
+docker run ethfetcher -d
 
 or
 
@@ -22,7 +22,7 @@ ETH_NODE_URL=value DB_CONNECTION_URL=value JWT_SECRET=value ./gradlew run
 
 #### Request
 
-`GET /lime/eth?transactionHashes`
+`GET /app/eth?transactionHashes`
 
 #### Response
 
@@ -61,7 +61,7 @@ or
 
 #### Request
 
-`GET /lime/all`
+`GET /app/all`
 
 #### Response
 
@@ -92,7 +92,7 @@ or
 
 #### Request
 
-`POST /lime/authenticate`
+`POST /app/authenticate`
 
 ```json
 {
@@ -113,7 +113,7 @@ or
 
 #### Request
 
-`GET /lime/my`
+`GET /app/my`
 
 #### Response
 

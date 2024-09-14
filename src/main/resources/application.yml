@@ -1,5 +1,5 @@
 spring:
   application:
-    name: ethereum-fetcher
+    name: eth-data-fetcher
   profiles:
     active: dev

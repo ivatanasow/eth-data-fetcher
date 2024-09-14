@@ -10,10 +10,10 @@ ext {
 }
 
 application {
-    mainClassName = 'com.limechain.ethereumfetcher.EthereumFetcherApplication'
+    mainClassName = 'com.home.ethfetcher.EthereumFetcherApplication'
 }
 
-group = 'com.limechain'
+group = 'com.home'
 version = '0.1.0-SNAPSHOT'
 
 java {
